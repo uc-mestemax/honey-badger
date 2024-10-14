@@ -21,40 +21,39 @@ For our Senior Design project, we sought out to build an automation framework fo
 
 - Install Terraform and AzureCLI for Authentication and allow Terraform to manage resources in Azure through the CLI
   - Windows: `winget install Hashicorp.Terraform, Microsoft.AzureCLI` (automatically will add Terraform's CLI alias, make sure you restart your shell)
-  - ![alt text](image.png)
+  - ![terraform installation](image.png)
 - Setup Azure Subscription @ portal.azure.com
   - Run `az login`
   - It should show your free Azure for Students subscription, enter 1 to select it
-![alt text](image-2.png)
+![az login](image-2.png)
 - Clone this repo, cd into the ./terraform directory, and run `terraform init`
   - This installs relevant API dependencies for you to use what is called a "provider" which for instance, can be Azure. If you were using AWS, there is another AWS provider for communicating with AWS APIs to spawn infrastructure. 
 
 #### Generate a SSH Keypair and Set Environment Variable
 
 - `ssh-keygen -t rsa -b 4096 -C "senior-design-ssh-key"`, can leave defaults blank or customize name of keypair
-- ![alt text](image-1.png)
+- ![terraform plan](image-1.png)
 
 - Always run a `terraform plan` before an apply. This gives you information about the deployment so you can ensure accuracy before running in blind.. This will show the resources that will get created within Azure, and it'll show you that everything is working and shouldn't error out. It will prompt you for your Public Key Variable path
 
-![alt text](image-3.png)
+![terraform apply](image-3.png)
 
 - When you are ready, run `terraform apply` and answer yes to the prompt and wait for the resources to be provisioned. One of the outputs will be the public IP of the VM instance. Use that as well as your id_rsa private key to connect to it.
 
-![alt text](image-5.png)
+![results of outputs after terraform apply](image-5.png)
 
 #### Connecting
 
 - Convert the private key to a ppk using Puttygen.
 - Use the following connection settings
   
-![alt text](image-4.png)
+![tpot finished installation](image-4.png)
 
-![alt text](image-6.png)
+![putty config](image-6.png)
 
 - Make sure you select the ppk key under SSH --> Auth
 
 ### Understanding the composition of the project
-
 
 This project is structured in three folders
 
