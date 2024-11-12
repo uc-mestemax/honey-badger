@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# https://stackoverflow.com/questions/18691867/where-to-find-logs-for-a-cloud-init-user-data-script
+
+# Logs for this script are stored in /var/log/cloud-init-output.log
+
+# Ran out of memory very quickly, so using a swap file to help out a bit.
+# https://linuxize.com/post/create-a-linux-swap-file/
+
+echo "Configuring Swap File"
+sudo fallocate -l 5G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Execute Simple Install Script for TPOT
+
+env bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
