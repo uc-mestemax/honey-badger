@@ -67,7 +67,8 @@ resource "azurerm_public_ip" "public_ip" {
   name                = "PublicIP"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  allocation_method   = "Static"
+  # allocation_method   = "Static"
+  allocation_method   = "Dynamic" # This results in a bug, where the output IP is not displayed when set to dynamic.
 }
 
 
