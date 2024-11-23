@@ -14,5 +14,6 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 
 # Execute Simple Install Script for TPOT
-
-env bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"
+PASSWORD=$(< /dev/urandom tr -dc 'A-Za-z0-9' | head -c8)
+echo "Your randomly generated web-user password is $PASSWORD"
+env myTPOT_TYPE="HIVE" myWEB_USER="SENIORDESIGN" myOK="Y" myWEB_PW=$PASSWORD myWEB_PW2=$PASSWORD bash -c "$(curl -sL https://github.com/uc-mestemax/honey-badger-tpotce/raw/master/install.sh

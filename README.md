@@ -40,6 +40,7 @@ For our Senior Design project, we sought out to build an automation framework fo
 
 - When you are ready, run `terraform apply` and answer yes to the prompt and wait for the resources to be provisioned. One of the outputs will be the public IP of the VM instance. Use that as well as your id_rsa private key to connect to it.
 
+
 ![results of outputs after terraform apply](./src/image-5.png)
 
 #### Connecting
