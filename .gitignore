@@ -38,3 +38,9 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore Virtual Environment 
+.venv
+
+# Ignore user_data.log from Flask Docker Container Testing
+user_data.log
