@@ -14,6 +14,25 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 
 # Execute Simple Install Script for TPOT
-PASSWORD=$(< /dev/urandom tr -dc 'A-Za-z0-9' | head -c8)
-echo "Your randomly generated web-user password is $PASSWORD"
-env myTPOT_TYPE="HIVE" myWEB_USER="SENIORDESIGN" myOK="Y" myWEB_PW=$PASSWORD myWEB_PW2=$PASSWORD bash -c "$(curl -sL https://github.com/uc-mestemax/honey-badger-tpotce/raw/master/install.sh
+
+echo
+
+# # TPOT Cannot Uninstall Under an Admin Identity, hence we create a new user
+# # Create the user with no password and a home directory
+# sudo useradd -m -s /bin/bash "azureuser"
+# # Remove the password (if any was set by default)
+sudo passwd -d "adminuser"
+# # Add the user to the sudoers file
+# echo "azureuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+
+# runcmd: env myQST="y" myTPOT_TYPE="h" myWEB_USER="SENIORDESIGN" myOK="Y" myWEB_PW=$PASSWORD myWEB_PW2=$PASSWORD bash -c "$(curl -sL https://github.com/uc-mestemax/honey-badger-tpotce/raw/refs/heads/customized-honeybadger-foundation/install.sh)"
+echo
+
+echo "Beginning TPOT Installation"
+
+
+# env myQST="y" myTPOT_TYPE="h" myWEB_USER="SENIORDESIGN" myOK="Y" myWEB_PW=$PASSWORD myWEB_PW2=$PASSWORD bash -c "$(curl -sL https://github.com/uc-mestemax/honey-badger-tpotce/raw/master/install.sh)"
+su - adminuser -c 'env myQST="y" myTPOT_TYPE="h" myWEB_USER="SENIORDESIGN" myOK="Y" myWEB_PW=$PASSWORD myWEB_PW2=$PASSWORD bash -c "$(curl -sL https://github.com/uc-mestemax/honey-badger-tpotce/raw/refs/heads/customized-honeybadger-foundation/install.sh)"'
+
+sudo reboot

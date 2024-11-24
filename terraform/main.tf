@@ -67,8 +67,8 @@ resource "azurerm_public_ip" "public_ip" {
   name                = "PublicIP"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  allocation_method   = "Static" # Static IP will consume more costs.
-  # allocation_method   = "Dynamic" # This results in a bug, where the output IP is not displayed when set to dynamic. See https://github.com/hashicorp/terraform-provider-azurerm/issues/8445
+  # allocation_method   = "Static" # Static IP will consume more costs.
+  allocation_method   = "Dynamic" # This results in a bug, where the output IP is not displayed when set to dynamic. See https://github.com/hashicorp/terraform-provider-azurerm/issues/8445
   # Possible workaround: https://www.reddit.com/r/Terraform/comments/j5siyl/getting_the_public_ip_address_of_a_vm_in_azure/
 }
 
