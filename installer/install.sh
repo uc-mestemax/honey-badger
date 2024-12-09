@@ -146,7 +146,7 @@ cd /home/user/installer/docker/
 # Generates web user inside container I have no idea what for
 sudo docker run -v $HOME/installer:/data --entrypoint bash -it -u $(id -u):$(id -g) dtagdevsec/tpotinit:24.04 "/opt/tpot/bin/genuser.sh"
 
-sudo docker compose --env-file "./test.env" -f "./sensor.yml" up
+sudo docker compose --env-file "./custom.env" -f "./customSensor.yml" up -d
 
 
 
