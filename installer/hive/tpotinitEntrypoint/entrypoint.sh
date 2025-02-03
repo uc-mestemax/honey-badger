@@ -107,7 +107,29 @@ done
 # validate_ip_or_domain "$TPOT_HIVE_IP"
 # WEB_USER=""
 
-echo
+# Data folder management
+if [ -f "/data/uuid" ];
+    echo "# Generating self signed certificate ..."
+    echo
+    myINTIP=$(/sbin/ip address show | awk '/inet .*brd/{split($2,a,"/"); print a[1]; exit}')
+    openssl req \
+          -nodes \
+          -x509 \
+          -sha512 \
+          -newkey rsa:8192 \
+          -keyout "/data/nginx/cert/nginx.key" \
+          -out "/data/nginx/cert/nginx.crt" \
+          -days 3650 \
+          -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd' \
+          -addext "subjectAltName = IP:${myINTIP}"
+    echo
+    create_web_users
+    echo
+    echo "# Extracting objects, final touches and permissions ..."
+    echo
+    tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
+    uuidgen > /data/uuid
+fi
 
 # Removing blackhole feature
 echo
