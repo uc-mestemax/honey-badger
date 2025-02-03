@@ -108,7 +108,7 @@ done
 # WEB_USER=""
 
 # Data folder management
-if [ -f "/data/uuid" ];
+if [ -f "/data/uuid" ]; then
     echo "# Generating self signed certificate ..."
     echo
     myINTIP=$(/sbin/ip address show | awk '/inet .*brd/{split($2,a,"/"); print a[1]; exit}')
