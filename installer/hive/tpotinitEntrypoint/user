@@ -80,33 +80,6 @@ validate_ip_or_domain() {
     fi
 }
 
-create_web_users() {
-    echo
-    echo "# Creating passwd files based on T-Pot .env config ..."
-    # Clear / create the passwd files
-    : > /data/nginx/conf/nginxpasswd
-    : > /data/nginx/conf/lswebpasswd
-    for i in ${WEB_USER};
-      do
-	    if [[ -n $i ]];
-	      then
-	        # Need to control newlines as they kept coming up for some reason
-	        echo -n "$i" | base64 -d -w0 | tr -d '\n' >> /data/nginx/conf/nginxpasswd
-	        echo >> /data/nginx/conf/nginxpasswd
-	    fi
-    done
-
-    for i in ${LS_WEB_USER};
-      do
-        if [[ -n $i ]];
-          then
-            # Need to control newlines as they kept coming up for some reason
-            echo -n "$i" | base64 -d -w0 | tr -d '\n' >> /data/nginx/conf/lswebpasswd
-            echo >> /data/nginx/conf/lswebpasswd
-          fi
-    done
-}
-
 # Defining Update permissions function
 update_permissions() {
 	echo
@@ -114,10 +87,6 @@ update_permissions() {
 	echo
 	chown -R tpot:tpot /data
 	chmod -R 770 /data
-  mkdir /data/nginx/conf
-  mkdir /data/nginx/cert
-	chmod 774 -R /data/nginx/conf
-	chmod 774 -R /data/nginx/cert
 }
 
 # Calling Update permissions function
@@ -126,61 +95,19 @@ update_permissions
 # Array of enviornment variables
 tpot_vars=("TPOT_PERSISTENCE" "TPOT_REPO" "TPOT_PULL_POLICY")
 
+# Validate input of environment variables
 for var in "${tpot_vars[@]}"; do
     check_var "$var"
     check_safety "$var"
 done
 
-# This checks the web user and logstash user
-# No $ for check_var
-check_var "WEB_USER"
-validate_base64 "${WEB_USER}"
-TPOT_HIVE_USER=""
-TPOT_HIVE_IP=""
-if [ "${LS_WEB_USER}" == "" ];
-    then
-    echo "# Warning: No LS_WEB_USER detected! T-Pots of type SENSOR will not be able to submit logs to this HIVE."
-    echo
-    else
-    validate_base64 "${LS_WEB_USER}"
-fi
+# Sensor Tpot type
+check_var "TPOT_HIVE_USER"
+check_var "TPOT_HIVE_IP"
+validate_ip_or_domain "$TPOT_HIVE_IP"
+WEB_USER=""
 
-# Data folder management
-if [ -f "/data/uuid" ];
-  then
-    create_web_users
-    echo
-    echo "# Data folder is present, just cleaning up, please be patient ..."
-    echo
-    /opt/tpot/bin/clean.sh "${TPOT_PERSISTENCE}"
-    echo
-  else
-    echo
-    echo "# Setting up data folder structure ..."
-    echo
-    /opt/tpot/bin/clean.sh off
-    echo
-    echo "# Generating self signed certificate ..."
-    echo
-    myINTIP=$(/sbin/ip address show | awk '/inet .*brd/{split($2,a,"/"); print a[1]; exit}')
-    openssl req \
-          -nodes \
-          -x509 \
-          -sha512 \
-          -newkey rsa:8192 \
-          -keyout "/data/nginx/cert/nginx.key" \
-          -out "/data/nginx/cert/nginx.crt" \
-          -days 3650 \
-          -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd' \
-          -addext "subjectAltName = IP:${myINTIP}"
-    echo
-    create_web_users
-    echo
-    echo "# Extracting objects, final touches and permissions ..."
-    echo
-    tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
-    uuidgen > /data/uuid
-fi
+echo
 
 # Removing blackhole feature
 echo
