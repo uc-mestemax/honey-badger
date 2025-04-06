@@ -1,34 +1,24 @@
 #!/bin/bash
 
-backup_dir="/root/packages"
-snapshot_dir="$backup_dir/snapshots"
-timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-log_dir="/root/data"
+honeybadger_host="adminuser@172.172.133.81"
+ssh_key="/home/vboxuser/.ssh/id_rsa"
+ssh_port=64295
 
-# CREATE DIRECTORIES IF THEY DON'T EXIST
-mkdir -p "$snapshot_dir"
+log_dir="/home/adminuser/tpotce/data"
+dest_dir="/home/data"
 
-# CALCULATE TIME 24HRS AGO
-start_time=$(date --date="24 hours ago" "+%b %_d %H:%M")
 
-# AWK THE LAST 24HRS OF LOGS INTO LOG FILE
-awk -v start="$start_time" '{ if ($0 > start) print }' "$log_dir" > "$snapshot_dir/last_24hrs.log"
+# RSYNC OVER SSH
+rsync -avz -e "ssh -i $ssh_key -p $ssh_port" "$honeybadger_host:$log_dir/" "$dest_dir/"
+  
 
-# COMPRESS LOGS 
-tar -cz -C "$snapshot_dir" last_24hrs.log "$backup_dir/logs_$timestamp.tar.gz"
-
-#backup_file="$output_dir/$(basename "$logfile" .log)_backup_$timestamp.tar.gz"
-
-#TAR THE LOGFILE SNAPSHOT
-#verbose "Creating backup tar file..."
-#tar -czf "$backup_file" "$logfile"
-
-# SUCCESS CHECK 
+# SUCCESS CHECK & LOGGING
 if [ $? -eq 0 ]; then
-    echo "Packing Successful!"
+    echo "RSYNC Forward Successful!"
+    echo "RSYNC Forward Successful at $timestamp" >> "/home/backup_records.txt"
 else
-    echo "Packing Failed!"
+    echo "RSYNC Forward Failed!"
+    echo "RSYNC Forward Failed at $timestamp" >> "/home/backup_records.txt"
 fi
 
-# REMOVE PACKAGES OLDER THAN 24HRS
-find "$backup_dir" -name "*.tar.gz" -mtime +1 -exec rm {} \;
+# CRON JOB: */10 * * * * /home/logback.sh
